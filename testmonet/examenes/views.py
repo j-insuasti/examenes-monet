@@ -1,7 +1,5 @@
-
 from rest_framework_simplejwt.views import TokenObtainPairView
-from .serializers import CustomJWTSerializer
+from examenes.serializers import StudentTokenObtainPairSerializer
 
-
-class CustomObtainJSONWebToken(TokenObtainPairView):
-    serializer_class = CustomJWTSerializer
+class StudentTokenObtainPairView(TokenObtainPairView):
+    serializer_class = StudentTokenObtainPairSerializer
