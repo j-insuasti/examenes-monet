@@ -6,6 +6,9 @@ from .models import Student
 from .serializers import StudentSerializer
 from .utils import generate_jwt 
 
+from rest_framework.permissions import IsAuthenticated
+
+
 class StudentLogin(APIView):
     def post(self, request):
         try:
@@ -30,7 +33,7 @@ class StudentLogin(APIView):
         response['Authorization'] = f'Bearer {token}'
         return response
 
-
+"""
 class RegisterExamAnswer(APIView):
     permission_classes = (IsAuthenticated,)
 
@@ -58,3 +61,6 @@ class RegisterExamAnswer(APIView):
             return Response(response_data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+        """
