@@ -34,7 +34,7 @@ class Student(models.Model):
         pwdhash = hashlib.pbkdf2_hmac('sha512', str.encode(raw_password), salt, 100000)
         pwdhash = pwdhash.hex()
         self.user.password = make_password(pwdhash)
-    #Valida la con
+    #Valida la contraseñas en las peticiones
     def check_password(self, raw_password):
         return check_password(raw_password, self.user.password)
 
@@ -48,23 +48,49 @@ class Student(models.Model):
 class Test(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    date = models.DateField() # Fecha en la que se llevará a cabo el examen
+    date = models.DateField()
 
     class Meta:
         verbose_name = 'Examen'
         verbose_name_plural = 'Examenes'
+
     def __str__(self):
         return self.name
+
     def get_absolute_url(self):
         return reverse('exam_detail', args=[str(self.id)])
+
+    @property
+    def total_questions(self):
+        return self.questions.count()
+
+    @property
+    def total_points(self):
+        return sum(question.points for question in self.questions.all())
+
+    def calculate_student_grade(self, student):
+        total_correct = 0
+        for question in self.questions.all():
+            try:
+                student_answer = Student.objects.get(student=student, question=question)
+            except Student.DoesNotExist:
+                continue
+            if student_answer.answer.is_correct:
+                total_correct += 1
+        return round((total_correct / self.total_questions) * self.total_points, 2)
+
+
 
 
 class Question(models.Model):
     exam = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='questions')
     question_text = models.TextField()
+    points = models.FloatField(default=1.0)
+
     class Meta:
         verbose_name = 'Pregunta'
         verbose_name_plural = 'Preguntas'
+
     def __str__(self):
         return self.question_text
 
