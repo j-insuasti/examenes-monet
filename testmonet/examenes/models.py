@@ -9,10 +9,10 @@ from django.core.validators import EmailValidator
 
 
 class Student(models.Model):
-    user = models.OneToOneField('auth.User', on_delete=models.CASCADE, related_name='student', null=True, blank=True)
-    email = models.CharField(max_length=100, validators=[EmailValidator()])
-    registration_number = models.CharField(max_length=10, unique=True)
-    password_hash = models.CharField(max_length=128, null=True, blank=True)
+    user = models.OneToOneField('auth.User',verbose_name='Nombre del usuario', on_delete=models.CASCADE, related_name='student', null=True, blank=True)
+    email = models.CharField(verbose_name='Correo del estudiante',max_length=100, validators=[EmailValidator()])
+    registration_number = models.CharField(verbose_name='Identificador del estudiante',max_length=10, unique=True)
+    password_hash = models.CharField(verbose_name='Contraseña del estudiante', max_length=128, null=True, blank=True)
 
     class Meta:
         verbose_name = 'Estudiante'
@@ -34,7 +34,7 @@ class Student(models.Model):
         pwdhash = hashlib.pbkdf2_hmac('sha512', str.encode(raw_password), salt, 100000)
         pwdhash = pwdhash.hex()
         self.user.password = make_password(pwdhash)
-
+    #Valida la con
     def check_password(self, raw_password):
         return check_password(raw_password, self.user.password)
 
